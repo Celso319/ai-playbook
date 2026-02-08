@@ -1,0 +1,64 @@
+#- name: Download yolov10m.onnx model for WanVideo
+#  ansible.builtin.get_url:
+#    url: "https://huggingface.co/Wan-AI/Wan2.2-Animate-14B/resolve/main/process_checkpoint/det/yolov10m.onnx"
+#    dest: "{{ comfy_dir }}/models/detection/yolov10m.onnx"
+#    mode: '0644'
+#    timeout: 300
+#    headers:
+#      User-Agent: "Mozilla/5.0 (Compatible; Ansible)"
+#  register: download_result
+#  until: download_result is succeeded
+#  retries: 3
+##  delay: 10
+---
+- name: Download all WanVideo models
+
+  vars:
+    comfyui_home: "{{ ansible_user_dir }}/ComfyUI"
+    
+    wan_models:
+      - name: "yolov10m.onnx"
+        url: "https://huggingface.co/Wan-AI/Wan2.2-Animate-14B/resolve/main/process_checkpoint/det/yolov10m.onnx"
+        dest: "models/detection"
+        
+      - name: "vitpose-l-wholebody.onnx"
+        url: "https://huggingface.co/JunkyByte/easy_ViTPose/resolve/main/onnx/wholebody/vitpose-l-wholebody.onnx"
+        dest: "models/detection"
+        
+      - name: "Wan2_2-Animate-14B_fp8_e4m3fn_scaled_KJ.safetensors"
+        url: "https://huggingface.co/Kijai/WanVideo_comfy_fp8_scaled/resolve/main/Wan22Animate/Wan2_2-Animate-14B_fp8_e4m3fn_scaled_KJ.safetensors"
+        dest: "models/diffusion_models"
+        
+      - name: "wan_2.1_vae.safetensors"
+        url: "https://huggingface.co/Kijai/WanVideo_comfy/resolve/main/Wan2_1_VAE_bf16.safetensors"
+        dest: "models/vae"
+
+      # Text Encoder
+      - name: "umt5-xxl-enc-bf16.safetensors"
+        url: "https://huggingface.co/Kijai/WanVideo_comfy/resolve/main/umt5-xxl-enc-bf16.safetensors"
+        dest: "models/text_encoders"
+
+      # Clip
+      - name: "clip_vision_h.safetensors"
+        url: "https://huggingface.co/Comfy-Org/Wan_2.1_ComfyUI_repackaged/resolve/main/split_files/clip_vision/clip_vision_h.safetensors"
+        dest: "models/clip_vision"
+
+      # LoRa Models
+      - name: "lightx2v_I2V_14B_480p_cfg_step_distill_rank64_bf16.safetensors"
+        url: "https://huggingface.co/Kijai/WanVideo_comfy/resolve/main/Lightx2v/lightx2v_I2V_14B_480p_cfg_step_distill_rank64_bf16.safetensors"
+        dest: "models/loras"
+
+      - name: "WanAnimate_relight_lora_fp16.safetensors"
+        url: "https://huggingface.co/Kijai/WanVideo_comfy/resolve/main/LoRAs/Wan22_relight/WanAnimate_relight_lora_fp16.safetensors"
+        dest: "models/loras"
+
+  tasks:
+    - name: Download WanVideo models
+      ansible.builtin.get_url:
+        url: "{{ item.url }}"
+        dest: "{{ comfyui_home }}/{{ item.dest }}/{{ item.name }}"
+        mode: '0644'
+        timeout: 1200
+      loop: "{{ wan_models }}"
+      loop_control:
+        label: "{{ item.name }}"
