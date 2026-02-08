@@ -1,0 +1,18 @@
+---
+# ComfyUI main tasks
+# -------------------------------
+# Dependencies
+# -------------------------------
+- name: Ensure required OS packages
+  apt:
+    name:
+      - git
+      - python3-venv
+      - python3-pip
+      - curl
+      - wget
+    update_cache: yes
+  become: true
+
+- name: Install ComfyUI
+  import_tasks: install.yaml

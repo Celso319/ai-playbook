@@ -1,0 +1,7 @@
+- name: AI Deploy
+  hosts: comfyui
+  become: true
+
+  roles:
+    - comfyui
+    - wan2_2

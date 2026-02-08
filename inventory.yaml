@@ -1,0 +1,5 @@
+comfyui:
+  hosts:
+    paperspace_Wan2_2:
+      ansible_host: 192.168.100.246
+

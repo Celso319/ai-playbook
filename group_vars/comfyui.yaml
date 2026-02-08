@@ -1,0 +1,5 @@
+comfy_user: celso
+comfy_home: "/home/{{ comfy_user }}"
+comfy_dir: "{{ comfy_home }}/ComfyUI"
+comfyui_repo: https://github.com/Comfy-Org/ComfyUI
+comfyui_version: master

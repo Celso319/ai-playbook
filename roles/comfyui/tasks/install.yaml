@@ -1,0 +1,61 @@
+---
+
+- name: Ensure ComfyUI user exists
+  user:
+    name: "{{ comfy_user }}"
+    shell: /bin/bash
+    create_home: yes
+
+
+# ---- Clone / update ComfyUI ----
+- name: Clone ComfyUI repository
+  git:
+    repo: "{{ comfyui_repo }}"
+    dest: "{{ comfy_dir }}"
+    version: "{{ comfyui_version }}"
+    update: yes
+  become_user: "{{ comfy_user }}"
+
+# ---- Python virtual environment ----
+- name: Create Python virtualenv
+  command: python3 -m venv venv
+  args:
+    chdir: "{{ comfy_dir }}"
+    creates: "{{ comfy_dir }}/venv"
+  become_user: "{{ comfy_user }}"
+
+- name: Upgrade pip in venv
+  pip:
+    name: pip
+    state: latest
+    virtualenv: "{{ comfy_dir }}/venv"
+
+- name: Install ComfyUI Python requirements
+  pip:
+    requirements: "{{ comfy_dir }}/requirements.txt"
+    virtualenv: "{{ comfy_dir }}/venv"
+
+
+# ---- Directory structure ----
+- name: Ensure ComfyUI model directories exist
+  file:
+    path: "{{ comfy_dir }}/models/{{ item }}"
+    state: directory
+    owner: "{{ comfy_user }}"
+    group: "{{ comfy_user }}"
+    mode: "0755"
+  loop:
+    - checkpoints
+    - vae
+    - loras
+    - controlnet
+    - clip
+    - upscale_models
+
+- name: Ensure custom_nodes directory exists
+  file:
+    path: "{{ comfy_dir }}/custom_nodes"
+    state: directory
+    owner: "{{ comfy_user }}"
+    group: "{{ comfy_user }}"
+    mode: "0755"
