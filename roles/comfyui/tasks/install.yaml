@@ -14,6 +14,8 @@
     dest: "{{ comfy_dir }}"
     version: "{{ comfyui_version }}"
     update: yes
+  become: true
+
   become_user: "{{ comfy_user }}"
 
 # ---- Python virtual environment ----
@@ -22,6 +24,7 @@
   args:
     chdir: "{{ comfy_dir }}"
     creates: "{{ comfy_dir }}/venv"
+  become: true
   become_user: "{{ comfy_user }}"
 
 - name: Upgrade pip in venv
@@ -59,3 +62,28 @@
     owner: "{{ comfy_user }}"
     group: "{{ comfy_user }}"
     mode: "0755"
+
+- name: Install ComfyUI-Manager custom node
+  git:
+    repo: https://github.com/ltdrdata/ComfyUI-Manager.git
+    dest: "{{ comfy_dir }}/custom_nodes/comfyui-manager"
+    version: main
+    update: yes
+  become_user: "{{ comfy_user }}"
+
+- name: Install ComfyUI-WanAnimatePreprocess custom node
+  git:
+    repo: https://github.com/kijai/ComfyUI-WanAnimatePreprocess.git
+    dest: "{{ comfy_dir }}/custom_nodes/ComfyUI-WanAnimatePreprocess"
+    version: main
+    update: yes
+  become_user: "{{ comfy_user }}"
+
+- name: Install dependencies for WanAnimate (CPU-safe)
+  pip:
+    name: 
+      - onnx
+      - onnxruntime  # Use 'onnxruntime-gpu' on your "muscle" server
+    virtualenv: "{{ comfy_dir }}/venv"
+  become: true
+  become_user: "{{ comfy_user }}"

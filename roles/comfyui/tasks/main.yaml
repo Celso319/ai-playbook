@@ -16,3 +16,6 @@
 
 - name: Install ComfyUI
   import_tasks: install.yaml
+
+
+
