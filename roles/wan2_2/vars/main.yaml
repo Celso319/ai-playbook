@@ -1,22 +1,4 @@
-#- name: Download yolov10m.onnx model for WanVideo
-#  ansible.builtin.get_url:
-#    url: "https://huggingface.co/Wan-AI/Wan2.2-Animate-14B/resolve/main/process_checkpoint/det/yolov10m.onnx"
-#    dest: "{{ comfy_dir }}/models/detection/yolov10m.onnx"
-#    mode: '0644'
-#    timeout: 300
-#    headers:
-#      User-Agent: "Mozilla/5.0 (Compatible; Ansible)"
-#  register: download_result
-#  until: download_result is succeeded
-#  retries: 3
-##  delay: 10
----
-- name: Download all WanVideo models
-
-  vars:
-    comfyui_home: "{{ ansible_user_dir }}/ComfyUI"
-    
-    wan_models:
+wan_models:
       - name: "yolov10m.onnx"
         url: "https://huggingface.co/Wan-AI/Wan2.2-Animate-14B/resolve/main/process_checkpoint/det/yolov10m.onnx"
         dest: "models/detection"
@@ -35,7 +17,7 @@
 
       # Text Encoder
       - name: "umt5-xxl-enc-bf16.safetensors"
-        url: "https://huggingface.co/Kijai/WanVideo_comfy/resolve/main/umt5-xxl-enc-bf16.safetensors"
+        url: "https://huggingface.co/Kijai/WanVideo_comfy/resolve/main/umt5-xxl-enc-fp8_e4m3fn.safetensors"
         dest: "models/text_encoders"
 
       # Clip
@@ -51,14 +33,3 @@
       - name: "WanAnimate_relight_lora_fp16.safetensors"
         url: "https://huggingface.co/Kijai/WanVideo_comfy/resolve/main/LoRAs/Wan22_relight/WanAnimate_relight_lora_fp16.safetensors"
         dest: "models/loras"
-
-  tasks:
-    - name: Download WanVideo models
-      ansible.builtin.get_url:
-        url: "{{ item.url }}"
-        dest: "{{ comfyui_home }}/{{ item.dest }}/{{ item.name }}"
-        mode: '0644'
-        timeout: 1200
-      loop: "{{ wan_models }}"
-      loop_control:
-        label: "{{ item.name }}"

@@ -20,7 +20,8 @@
 
 # ---- Python virtual environment ----
 - name: Create Python virtualenv
-  command: python3 -m venv venv
+  #command: python3 -m venv venv
+  command: "/usr/bin/python3.11 -m venv venv"
   args:
     chdir: "{{ comfy_dir }}"
     creates: "{{ comfy_dir }}/venv"
@@ -32,11 +33,13 @@
     name: pip
     state: latest
     virtualenv: "{{ comfy_dir }}/venv"
+    virtualenv_command: "/usr/bin/python3.11 -m venv"
 
 - name: Install ComfyUI Python requirements
   pip:
     requirements: "{{ comfy_dir }}/requirements.txt"
     virtualenv: "{{ comfy_dir }}/venv"
+    virtualenv_command: "/usr/bin/python3.11 -m venv"
 
 
 # ---- Directory structure ----
@@ -85,5 +88,6 @@
       - onnx
       - onnxruntime  # Use 'onnxruntime-gpu' on your "muscle" server
     virtualenv: "{{ comfy_dir }}/venv"
+    virtualenv_command: "/usr/bin/python3.11 -m venv"
   become: true
   become_user: "{{ comfy_user }}"

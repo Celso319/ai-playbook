@@ -1,5 +1,7 @@
 comfyui:
   hosts:
     paperspace_Wan2_2:
-      ansible_host: 192.168.100.246
+      ansible_host: 184.105.5.35
+      ansible_user: paperspace
+      ansible_python_interpreter: /usr/bin/python3.11
 
